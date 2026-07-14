@@ -13,3 +13,9 @@ export function guestLoader() {
   if (token) throw redirect(paths.dashboard);
   return null;
 }
+
+export function otpLoader() {
+  const { pendingEmail, pendingMode } = useAuthStore.getState();
+  if (!pendingEmail || !pendingMode) throw redirect(paths.login);
+  return null;
+}

@@ -8,4 +8,20 @@ const meta: Meta<typeof AuthLayout> = {
 };
 export default meta;
 type Story = StoryObj<typeof AuthLayout>;
-export const Default: Story = { args: { title: 'Sign in', children: <div>Form goes here</div> } };
+
+export const WithIllustration: Story = {
+  args: {
+    title: 'Welcome Back',
+    subtitle: 'Please enter your details to sign in.',
+    withIllustration: true,
+    children: <div>Auth form</div>,
+  },
+};
+
+export const Centered: Story = {
+  args: {
+    title: 'Verify',
+    withIllustration: false,
+    children: <div>OTP form</div>,
+  },
+};

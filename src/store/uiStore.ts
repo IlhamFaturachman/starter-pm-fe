@@ -6,22 +6,42 @@ interface Toast {
   tone: 'info' | 'success' | 'warning' | 'danger';
 }
 
+type Theme = 'light' | 'dark';
+
+function getInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'light';
+  try {
+    const stored = localStorage.getItem('pmfe-theme');
+    if (stored === 'light' || stored === 'dark') return stored;
+  } catch {
+    /* ignore */
+  }
+  return 'light';
+}
+
 interface UiState {
   sidebarOpen: boolean;
-  theme: 'light' | 'dark';
+  theme: Theme;
   toasts: Toast[];
   toggleSidebar: () => void;
-  setTheme: (t: 'light' | 'dark') => void;
+  setTheme: (t: Theme) => void;
   pushToast: (t: Omit<Toast, 'id'>) => void;
   removeToast: (id: string) => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
   sidebarOpen: true,
-  theme: 'light',
+  theme: getInitialTheme(),
   toasts: [],
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-  setTheme: (theme) => set({ theme }),
+  setTheme: (theme) => {
+    try {
+      localStorage.setItem('pmfe-theme', theme);
+    } catch {
+      /* ignore */
+    }
+    set({ theme });
+  },
   pushToast: (t) =>
     set((s) => ({
       toasts: [...s.toasts, { ...t, id: crypto.randomUUID() }],

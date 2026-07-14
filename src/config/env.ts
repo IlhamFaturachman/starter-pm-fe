@@ -1,17 +1,15 @@
-const importMeta = import.meta as unknown as {
-  env: {
-    VITE_API_URL?: string;
-    VITE_SOCKET_URL?: string;
-    MODE: string;
-    DEV: boolean;
-    PROD: boolean;
-  };
-};
-
 export const config = {
-  apiUrl: importMeta.env.VITE_API_URL ?? 'http://localhost:3000/api',
-  socketUrl: importMeta.env.VITE_SOCKET_URL ?? 'http://localhost:3000',
-  mode: importMeta.env.MODE,
-  isDev: importMeta.env.DEV,
-  isProd: importMeta.env.PROD,
+  apiUrl:
+    (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) ||
+    'http://localhost:3000/api',
+  socketUrl:
+    (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SOCKET_URL) ||
+    'http://localhost:3000',
+  mode:
+    (typeof import.meta !== 'undefined' && import.meta.env?.MODE) ||
+    'development',
+  isDev:
+    typeof import.meta !== 'undefined' ? Boolean(import.meta.env?.DEV) : true,
+  isProd:
+    typeof import.meta !== 'undefined' ? Boolean(import.meta.env?.PROD) : false,
 } as const;

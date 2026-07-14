@@ -1,8 +1,11 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import { paths } from './paths';
-import { authLoader, guestLoader } from './guards';
+import { authLoader, guestLoader, otpLoader } from './guards';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
 import { LoginPage } from '@/pages/LoginPage';
+import { SignupPage } from '@/pages/SignupPage';
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
+import { OtpPage } from '@/pages/OtpPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ProjectsPage } from '@/pages/ProjectsPage';
 import { KanbanPage } from '@/pages/KanbanPage';
@@ -19,6 +22,21 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
+    path: paths.signup,
+    loader: guestLoader,
+    element: <SignupPage />,
+  },
+  {
+    path: paths.forgotPassword,
+    loader: guestLoader,
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: paths.verifyOtp,
+    loader: otpLoader,
+    element: <OtpPage />,
+  },
+  {
     id: 'app',
     loader: authLoader,
     element: <DashboardLayout />,
@@ -33,7 +51,7 @@ export const router = createBrowserRouter([
   {
     path: '*',
     element: (
-      <div className="flex min-h-screen items-center justify-center text-surface-700">
+      <div className="flex min-h-screen items-center justify-center text-text-main-light dark:text-text-main-dark">
         404 — Not found
       </div>
     ),

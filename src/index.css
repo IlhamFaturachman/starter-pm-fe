@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-primary-50: #eff6ff;
@@ -12,6 +15,11 @@
   --color-primary-800: #1e40af;
   --color-primary-900: #1e3a8a;
 
+  --color-brand-blue: #0c5ead;
+  --color-brand-blue-hover: #0a4c8c;
+  --color-brand-orange: #f99823;
+  --color-brand-orange-hover: #df8216;
+
   --color-surface-0: #ffffff;
   --color-surface-50: #f8fafc;
   --color-surface-100: #f1f5f9;
@@ -20,6 +28,20 @@
   --color-surface-800: #1e293b;
   --color-surface-900: #0f172a;
 
+  --color-app-bg-light: #f4f6f8;
+  --color-card-bg-light: #ffffff;
+  --color-border-light: #e2e8f0;
+  --color-input-bg-light: #f8fafc;
+  --color-text-main-light: #1e293b;
+  --color-text-muted-light: #64748b;
+
+  --color-app-bg-dark: #0b1120;
+  --color-card-bg-dark: #1e293b;
+  --color-border-dark: #334155;
+  --color-input-bg-dark: #0f172a;
+  --color-text-main-dark: #f8fafc;
+  --color-text-muted-dark: #94a3b8;
+
   --font-sans:
     'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -27,6 +49,31 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+
+  --shadow-glow-blue: 0 0 20px -5px rgba(12, 94, 173, 0.4);
+  --shadow-glow-orange: 0 0 20px -5px rgba(249, 152, 35, 0.4);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes otp-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 html,
@@ -38,12 +85,21 @@ body,
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background-color: var(--color-surface-50);
-  color: var(--color-surface-900);
+  background-color: var(--color-app-bg-light);
+  color: var(--color-text-main-light);
   -webkit-font-smoothing: antialiased;
 }
 
 .dark body {
-  background-color: var(--color-surface-900);
-  color: var(--color-surface-50);
+  background-color: var(--color-app-bg-dark);
+  color: var(--color-text-main-dark);
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
 }
