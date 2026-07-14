@@ -4,7 +4,9 @@
   "description": "This folder is the **backend** for the project-management app. The frontend lives in\r [`../client`](../client) and already expects this server to exist. Keep the contract\r below in sync with the client — that is what keeps the two halves working together.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build ./src/index.ts --outdir ./dist --target node"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.1",
+    "bun-types": "^1.3.14",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "typescript": "^7.0.2"
