@@ -4,11 +4,11 @@ import { guestLoader, otpLoader } from './guards';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
 import { ForgotPasswordPage, LoginPage, OtpPage, SignupPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
-import { GroupManagementPage } from '@/pages/GroupManagementPage';
+import { GroupManagementPage } from '@/pages/settings/GroupManagementPage';
 import { KanbanPage } from '@/pages/kanban/KanbanPage';
 import { ProjectsPage } from '@/pages/projects/ProjectsPage';
 import { TableDemoPage } from '@/pages/table-demo/TableDemoPage';
-import { UserManagementPage } from '@/pages/UserManagementPage';
+import { UserManagementPage } from '@/pages/settings/UserManagementPage';
 
 export const router = createBrowserRouter([
   {
