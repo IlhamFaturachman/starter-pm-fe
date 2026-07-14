@@ -3,7 +3,7 @@ import crypto from "crypto";
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { users, saveDb } from "../store/db";
+import { User } from "../store/db";
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ router.post("/signup", async (req, res) => {
 
   const { name, email, password } = result.data;
 
-  const existingUser = users.find((u) => u.email === email);
+  const existingUser = await User.findOne({ where: { email } });
 
   if (existingUser) {
     return res.status(400).json({
@@ -57,20 +57,19 @@ router.post("/signup", async (req, res) => {
   const uniqueId = crypto.randomUUID();
   const passwordHash = await bcrypt.hash(password, 10);
 
-  const newUser = {
+  const newUser = await User.create({
     id: uniqueId,
     name,
     email,
-    passwordHash: passwordHash,
+    passwordHash,
     role: "member",
-  } as const;
-
-  users.push(newUser);
-  saveDb();
-
-  const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET! || "very_secret_pram_password", {
-    expiresIn: "7d",
   });
+
+  const token = jwt.sign(
+    { id: newUser.id },
+    process.env.JWT_SECRET! || "very_secret_pram_password",
+    { expiresIn: "7d" },
+  );
 
   res.status(201).json({
     token,

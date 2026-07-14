@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 
 import authRouter from "./routes/auth";
+import { initDb } from "./store/db";
+import { seed } from "./store/seed";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +20,14 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+initDb()
+  .then(() => seed())
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to initialize database:", err);
+    process.exit(1);
+  });
