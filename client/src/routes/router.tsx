@@ -1,15 +1,14 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import { paths } from './paths';
-import { authLoader, guestLoader, otpLoader } from './guards';
+import { guestLoader, otpLoader } from './guards';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
-import { LoginPage } from '@/pages/auth';
-import { SignupPage } from '@/pages/auth';
-import { ForgotPasswordPage } from '@/pages/auth';
-import { OtpPage } from '@/pages/auth';
+import { ForgotPasswordPage, LoginPage, OtpPage, SignupPage } from '@/pages/auth';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
-import { ProjectsPage } from '@/pages/projects/ProjectsPage';
+import { GroupManagementPage } from '@/pages/GroupManagementPage';
 import { KanbanPage } from '@/pages/kanban/KanbanPage';
+import { ProjectsPage } from '@/pages/projects/ProjectsPage';
 import { TableDemoPage } from '@/pages/table-demo/TableDemoPage';
+import { UserManagementPage } from '@/pages/UserManagementPage';
 
 export const router = createBrowserRouter([
   {
@@ -38,7 +37,7 @@ export const router = createBrowserRouter([
   },
   {
     id: 'app',
-    loader: authLoader,
+    loader: guestLoader, // change to authLoader later when auth is implemented
     element: <DashboardLayout />,
     children: [
       { index: true, element: <Navigate to={paths.dashboard} replace /> },
@@ -46,6 +45,9 @@ export const router = createBrowserRouter([
       { path: paths.projects, element: <ProjectsPage /> },
       { path: paths.kanban, element: <KanbanPage /> },
       { path: paths.tableDemo, element: <TableDemoPage /> },
+      { path: paths.settings, element: <Navigate to={paths.userManagement} replace /> },
+      { path: paths.userManagement, element: <UserManagementPage /> },
+      { path: paths.groupManagement, element: <GroupManagementPage /> },
     ],
   },
   {
