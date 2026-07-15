@@ -7,7 +7,7 @@ import { Button } from '@/components/atoms/Button';
 import { useLoginMutation } from '@/api/queries/auth';
 import { applyFormErrors } from '@/lib/apiError';
 import { paths } from '@/routes/paths';
-import { Mail, Lock } from '@/components/atoms/icons';
+
 
 interface LoginForm {
   email: string;
@@ -48,19 +48,17 @@ export function LoginPage() {
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <TextField
             name="email"
-            label="Email Address"
+            label="Email:"
             type="email"
-            placeholder="name@company.com"
+            placeholder="email@gmail.com"
             autoComplete="email"
-            icon={<Mail className="h-5 w-5" />}
           />
           <TextField
             name="password"
-            label="Password"
+            label="Password:"
             type="password"
-            placeholder="••••••••"
+            placeholder="Enter your Password"
             autoComplete="current-password"
-            icon={<Lock className="h-5 w-5" />}
           />
 
           <div className="flex items-center justify-between pt-1">
@@ -68,15 +66,15 @@ export function LoginPage() {
               <input
                 type="checkbox"
                 {...methods.register('remember')}
-                className="h-4 w-4 cursor-pointer rounded border-border-light bg-input-bg-light text-brand-orange focus:ring-brand-orange/50 focus:ring-offset-0 dark:border-border-dark dark:bg-input-bg-dark"
+                className="h-4 w-4 cursor-pointer rounded border-slate-200 bg-slate-50 text-brand-orange focus:ring-brand-orange/50 focus:ring-offset-0 dark:border-slate-800 dark:bg-slate-900"
               />
-              <span className="text-sm font-medium text-text-muted-light transition-colors group-hover:text-text-main-light dark:text-text-muted-dark dark:group-hover:text-text-main-dark">
+              <span className="text-sm font-semibold text-text-muted-light transition-colors group-hover:text-text-main-light dark:text-text-muted-dark dark:group-hover:text-text-main-dark">
                 Remember me
               </span>
             </label>
             <Link
               to={paths.forgotPassword}
-              className="text-sm font-semibold text-brand-blue transition-colors hover:text-brand-orange dark:text-[#3B9AE5]"
+              className="text-sm font-bold text-brand-blue transition-colors hover:text-brand-orange dark:text-[#3B9AE5] dark:hover:text-brand-orange"
             >
               Forgot password?
             </Link>
@@ -91,15 +89,15 @@ export function LoginPage() {
           <Button
             type="submit"
             isLoading={login.isPending}
-            className="w-full rounded-xl bg-gradient-to-r from-brand-blue to-blue-500 py-3.5 font-bold text-white shadow-lg shadow-brand-blue/20 hover:from-brand-blue-hover hover:to-blue-600 hover:shadow-glow-blue"
+            className="w-full rounded-full bg-gradient-to-r from-brand-blue to-blue-500 py-3.5 font-bold text-white shadow-lg shadow-brand-blue/20 hover:from-brand-blue-hover hover:to-blue-600 hover:shadow-[0_0_20px_rgba(12,94,173,0.4)] hover:-translate-y-0.5 transition-all duration-300 active:scale-98"
           >
-            Sign In
+            Sign in
           </Button>
         </form>
       </FormProvider>
 
       <div className="mt-8 border-t border-border-light pt-6 text-center dark:border-border-dark">
-        <p className="text-sm font-medium text-text-muted-light dark:text-text-muted-dark">
+        <p className="text-sm font-semibold text-text-muted-light dark:text-text-muted-dark">
           Don&apos;t have an account?{' '}
           <Link
             to={paths.signup}
@@ -111,4 +109,5 @@ export function LoginPage() {
       </div>
     </AuthLayout>
   );
+
 }

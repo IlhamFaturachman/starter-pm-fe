@@ -7,7 +7,7 @@ import { Button } from '@/components/atoms/Button';
 import { useForgotPasswordMutation } from '@/api/queries/auth';
 import { applyFormErrors } from '@/lib/apiError';
 import { paths } from '@/routes/paths';
-import { Mail, Shield, Check } from '@/components/atoms/icons';
+import { Shield, Check } from '@/components/atoms/icons';
 import { cn } from '@/lib/cn';
 
 interface ForgotForm {
@@ -55,28 +55,27 @@ export function ForgotPasswordPage() {
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <TextField
             name="email"
-            label="Email"
+            label="Email:"
             type="email"
-            placeholder="name@company.com"
+            placeholder="email@gmail.com"
             autoComplete="email"
-            icon={<Mail className="h-5 w-5" />}
           />
 
           <div>
             <label className="mb-2 block text-sm font-semibold tracking-wide">Security Check</label>
-            <label className="group flex cursor-pointer items-center justify-between rounded-xl border border-border-light bg-input-bg-light p-4 transition-colors hover:border-brand-orange dark:border-border-dark dark:bg-input-bg-dark">
+            <label className="group flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:border-brand-orange dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
                     'flex h-6 w-6 items-center justify-center rounded border-2 transition-colors',
                     confirmed
                       ? 'border-brand-orange bg-brand-orange text-white'
-                      : 'border-border-light group-hover:border-brand-orange dark:border-border-dark',
+                      : 'border-slate-200 bg-white group-hover:border-brand-orange dark:border-slate-800 dark:bg-slate-900',
                   )}
                 >
                   {confirmed && <Check className="h-4 w-4" />}
                 </div>
-                <span className="text-sm font-medium">I am human</span>
+                <span className="text-sm font-semibold">I am human</span>
               </div>
               <Shield className="h-6 w-6 text-brand-blue" />
               <input
@@ -102,12 +101,13 @@ export function ForgotPasswordPage() {
           <Button
             type="submit"
             isLoading={forgot.isPending}
-            className="w-full rounded-xl bg-brand-blue py-3.5 font-bold text-white shadow-lg shadow-brand-blue/20 hover:bg-brand-blue-hover hover:shadow-glow-blue"
+            className="w-full rounded-full bg-gradient-to-r from-brand-blue to-blue-500 py-3.5 font-bold text-white shadow-lg shadow-brand-blue/20 hover:from-brand-blue-hover hover:to-blue-600 hover:shadow-[0_0_20px_rgba(12,94,173,0.4)] hover:-translate-y-0.5 transition-all duration-300 active:scale-98"
           >
             Send Reset Link
           </Button>
         </form>
       </FormProvider>
+
 
       <div className="mt-6 text-center">
         <Link
