@@ -1,8 +1,11 @@
 import express, { Request, Response, ErrorRequestHandler } from "express";
 import cors from "cors";
+import http from "http";
 import { apiReference } from "@scalar/express-api-reference";
 
 import authRouter from "./routes/auth";
+import projectsRouter from "./routes/projects";
+import tasksRouter from "./routes/tasks";
 import { initDb } from "./store/db";
 import { seed } from "./store/seed";
 import healthRouter from "./routes/health";
@@ -12,6 +15,7 @@ import menusRouter from "./routes/menus";
 import { openApiSpec } from "./openapi";
 import { apiLimiter, authLimiter } from "./utils/authHelpers";
 import { sendError } from "./utils/response";
+import { socketService } from "./utils/socket";
 
 const requiredVariables = ["JWT_SECRET", "SMTP_PASS", "SMTP_FROM"];
 const missingVariables = requiredVariables.filter(
@@ -45,6 +49,8 @@ app.use("/api/health", healthRouter);
 app.use("/api/permissions", permissionsRouter);
 app.use("/api/groups", groupsRouter);
 app.use("/api/menus", menusRouter);
+app.use("/api/projects", projectsRouter);
+app.use("/api/tasks", tasksRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.json({
@@ -59,10 +65,13 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 
 app.use(errorHandler);
 
+const httpServer = http.createServer(app);
+socketService.init(httpServer);
+
 initDb()
   .then(() => seed())
   .then(() => {
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
@@ -70,3 +79,4 @@ initDb()
     console.error("Failed to initialize database:", err);
     process.exit(1);
   });
+
