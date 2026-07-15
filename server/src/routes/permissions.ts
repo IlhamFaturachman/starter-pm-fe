@@ -1,5 +1,6 @@
 import express from "express";
 import { Permission, Menu } from "../store/db";
+import { sendSuccess } from "../utils/response";
 
 const router = express.Router();
 
@@ -8,7 +9,7 @@ router.get("/", async (_req, res) => {
     include: [{ model: Menu, as: "menu", attributes: ["id", "name", "route"] }],
     order: [[{ model: Menu, as: "menu" }, "order", "ASC"], ["action", "ASC"]],
   });
-  res.json(permissions);
+  sendSuccess(res, "Permissions retrieved", permissions);
 });
 
 export default router;

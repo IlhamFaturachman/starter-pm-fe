@@ -3,7 +3,15 @@ import type { oas31 } from "openapi3-ts";
 export const AuthResponse: oas31.SchemaObject = {
   type: "object",
   properties: {
-    token: { type: "string", description: "JWT token" },
-    user: { $ref: "#/components/schemas/User" },
+    success: { type: "boolean", example: true },
+    message: { type: "string", example: "Login successful" },
+    data: {
+      type: "object",
+      properties: {
+        token: { type: "string", description: "JWT token" },
+        user: { $ref: "#/components/schemas/User" },
+      },
+    },
   },
+  required: ["success", "message", "data"],
 };

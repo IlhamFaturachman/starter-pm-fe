@@ -1,11 +1,12 @@
 import express from "express";
 import { Menu, Permission } from "../store/db";
+import { sendSuccess, sendError } from "../utils/response";
 
 const router = express.Router();
 
 router.get("/", async (_req, res) => {
   const menus = await Menu.findAll({ order: [["order", "ASC"]] });
-  res.json(menus);
+  sendSuccess(res, "Menus retrieved", menus);
 });
 
 router.get("/:id", async (req, res) => {
@@ -14,10 +15,10 @@ router.get("/:id", async (req, res) => {
   });
 
   if (!menu) {
-    return res.status(404).json({ message: "Menu not found" });
+    return sendError(res, "Menu not found", 404);
   }
 
-  res.json(menu);
+  sendSuccess(res, "Menu retrieved", menu);
 });
 
 export default router;

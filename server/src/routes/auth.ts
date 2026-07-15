@@ -3,6 +3,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import { OTP, User } from "../store/db";
 import { sendEmail } from "../utils/email";
+import { sendSuccess, sendError, sendValidationError } from "../utils/response";
 import { formatZodErrors } from "../utils/validation";
 import {
   generateOtpCode,
@@ -34,10 +35,7 @@ router.post("/signup", async (req, res) => {
   const result = signupSchema.safeParse(req.body);
 
   if (!result.success) {
-    return res.status(400).json({
-      message: "Validation failed",
-      errors: formatZodErrors(result.error),
-    });
+    return sendValidationError(res, formatZodErrors(result.error));
   }
 
   const { name, email, password } = result.data;
@@ -45,11 +43,8 @@ router.post("/signup", async (req, res) => {
   const existingUser = await User.findOne({ where: { email } });
 
   if (existingUser) {
-    return res.status(400).json({
-      message: "Email already exists",
-      errors: {
-        email: ["Email already exists"],
-      },
+    return sendError(res, "Email already exists", 400, {
+      errors: { email: ["Email already exists"] },
     });
   }
 
@@ -64,10 +59,10 @@ router.post("/signup", async (req, res) => {
 
   const token = generateToken(newUser.id);
 
-  res.status(201).json({
+  sendSuccess(res, "Signup successful", {
     token,
     user: formatUserResponse(newUser),
-  });
+  }, 201);
 });
 
 const loginSchema = z.object({
@@ -79,10 +74,7 @@ router.post("/login", async (req, res) => {
   const result = loginSchema.safeParse(req.body);
 
   if (!result.success) {
-    return res.status(400).json({
-      message: "Validation failed",
-      errors: formatZodErrors(result.error),
-    });
+    return sendValidationError(res, formatZodErrors(result.error));
   }
 
   const { email, password } = result.data;
@@ -90,28 +82,22 @@ router.post("/login", async (req, res) => {
   const user = await User.findOne({ where: { email } });
 
   if (!user) {
-    return res.status(401).json({
-      message: "Invalid email or password",
-      errors: {
-        email: ["Invalid email or password"],
-      },
+    return sendError(res, "Invalid email or password", 401, {
+      errors: { email: ["Invalid email or password"] },
     });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
   if (!isPasswordValid) {
-    return res.status(401).json({
-      message: "Invalid email or password",
-      errors: {
-        password: ["Invalid email or password"],
-      },
+    return sendError(res, "Invalid email or password", 401, {
+      errors: { password: ["Invalid email or password"] },
     });
   }
 
   const token = generateToken(user.id);
 
-  res.status(200).json({
+  sendSuccess(res, "Login successful", {
     token,
     user: formatUserResponse(user),
   });
@@ -125,21 +111,15 @@ router.post("/forgot", async (req, res) => {
   const result = forgotPasswordSchema.safeParse(req.body);
 
   if (!result.success) {
-    return res.status(400).json({
-      message: "Validation failed",
-      errors: formatZodErrors(result.error),
-    });
+    return sendValidationError(res, formatZodErrors(result.error));
   }
 
   const { email } = result.data;
   const user = await User.findOne({ where: { email } });
 
   if (!user) {
-    return res.status(400).json({
-      message: "Email not found",
-      errors: {
-        email: ["Email not found"],
-      },
+    return sendError(res, "Email not found", 400, {
+      errors: { email: ["Email not found"] },
     });
   }
 
@@ -156,12 +136,10 @@ router.post("/forgot", async (req, res) => {
     await sendEmail(email, "Your password reset code", buildOtpEmailHtml(code));
   } catch (error) {
     console.error("Failed to send OTP email:", error);
-    return res.status(500).json({
-      message: "Failed to send reset code email. Please try again.",
-    });
+    return sendError(res, "Failed to send reset code email. Please try again.", 500);
   }
 
-  return res.status(200).json({ ok: true });
+  sendSuccess(res, "Reset code sent to your email");
 });
 
 const verifyOtpSchema = z.object({
@@ -173,10 +151,7 @@ router.post("/verify-otp", async (req, res) => {
   const result = verifyOtpSchema.safeParse(req.body);
 
   if (!result.success) {
-    return res.status(400).json({
-      message: "Validation failed",
-      errors: formatZodErrors(result.error),
-    });
+    return sendValidationError(res, formatZodErrors(result.error));
   }
 
   const { email, code } = result.data;
@@ -184,22 +159,16 @@ router.post("/verify-otp", async (req, res) => {
   const otp = await OTP.findOne({ where: { email } });
 
   if (!user || !otp || otp.code !== code) {
-    return res.status(400).json({
-      message: "Invalid OTP code",
-      errors: {
-        code: ["Invalid OTP code"],
-      },
+    return sendError(res, "Invalid OTP code", 400, {
+      errors: { code: ["Invalid OTP code"] },
     });
   }
 
   if (otp.expiresAt.getTime() <= Date.now()) {
     await otp.destroy();
 
-    return res.status(400).json({
-      message: "OTP code has expired",
-      errors: {
-        code: ["OTP code has expired"],
-      },
+    return sendError(res, "OTP code has expired", 400, {
+      errors: { code: ["OTP code has expired"] },
     });
   }
 
@@ -214,15 +183,13 @@ router.post("/verify-otp", async (req, res) => {
     );
   } catch (error) {
     console.error("Failed to send temporary password email:", error);
-    return res.status(500).json({
-      message: "Failed to send temporary password email. Please try again.",
-    });
+    return sendError(res, "Failed to send temporary password email. Please try again.", 500);
   }
 
   await user.update({ passwordHash });
   await otp.destroy();
 
-  return res.status(200).json({ ok: true });
+  sendSuccess(res, "Password reset successful");
 });
 
 export default router;

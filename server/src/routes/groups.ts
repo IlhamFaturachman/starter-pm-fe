@@ -1,6 +1,7 @@
 import { z } from "zod";
 import express from "express";
 import { Group, Permission, GroupPermission } from "../store/db";
+import { sendSuccess, sendError, sendValidationError } from "../utils/response";
 import { formatZodErrors } from "../utils/validation";
 
 const router = express.Router();
@@ -26,23 +27,23 @@ router.get("/", async (_req, res) => {
     include: [{ model: Permission, as: "permissions", attributes: ["id", "key", "name", "action"] }],
     order: [["name", "ASC"]],
   });
-  res.json(groups);
+  sendSuccess(res, "Groups retrieved", groups);
 });
 
 // ── POST / — create group ──────────────────────────────────
 router.post("/", async (req, res) => {
   const result = createGroupSchema.safeParse(req.body);
   if (!result.success) {
-    return res.status(400).json({ message: "Validation failed", errors: formatZodErrors(result.error) });
+    return sendValidationError(res, formatZodErrors(result.error));
   }
 
   const existing = await Group.findOne({ where: { name: result.data.name } });
   if (existing) {
-    return res.status(400).json({ message: "Group name already exists" });
+    return sendError(res, "Group name already exists", 400);
   }
 
   const group = await Group.create(result.data);
-  res.status(201).json(group);
+  sendSuccess(res, "Group created", group, 201);
 });
 
 // ── GET /:id — group detail with permissions ───────────────
@@ -52,63 +53,63 @@ router.get("/:id", async (req, res) => {
   });
 
   if (!group) {
-    return res.status(404).json({ message: "Group not found" });
+    return sendError(res, "Group not found", 404);
   }
 
-  res.json(group);
+  sendSuccess(res, "Group retrieved", group);
 });
 
 // ── PUT /:id — update group ────────────────────────────────
 router.put("/:id", async (req, res) => {
   const group = await Group.findByPk(req.params.id);
   if (!group) {
-    return res.status(404).json({ message: "Group not found" });
+    return sendError(res, "Group not found", 404);
   }
 
   const result = updateGroupSchema.safeParse(req.body);
   if (!result.success) {
-    return res.status(400).json({ message: "Validation failed", errors: formatZodErrors(result.error) });
+    return sendValidationError(res, formatZodErrors(result.error));
   }
 
   if (result.data.name) {
     const existing = await Group.findOne({ where: { name: result.data.name } });
     if (existing && existing.id !== group.id) {
-      return res.status(400).json({ message: "Group name already exists" });
+      return sendError(res, "Group name already exists", 400);
     }
   }
 
   await group.update(result.data);
-  res.json(group);
+  sendSuccess(res, "Group updated", group);
 });
 
 // ── DELETE /:id — delete group ─────────────────────────────
 router.delete("/:id", async (req, res) => {
   const group = await Group.findByPk(req.params.id);
   if (!group) {
-    return res.status(404).json({ message: "Group not found" });
+    return sendError(res, "Group not found", 404);
   }
 
   await GroupPermission.destroy({ where: { groupId: group.id } });
   await group.destroy();
-  res.status(204).end();
+  sendSuccess(res, "Group deleted");
 });
 
 // ── PUT /:id/permissions — assign permissions (replace all) ─
 router.put("/:id/permissions", async (req, res) => {
   const group = await Group.findByPk(req.params.id);
   if (!group) {
-    return res.status(404).json({ message: "Group not found" });
+    return sendError(res, "Group not found", 404);
   }
 
   const result = assignPermissionsSchema.safeParse(req.body);
   if (!result.success) {
-    return res.status(400).json({ message: "Validation failed", errors: formatZodErrors(result.error) });
+    return sendValidationError(res, formatZodErrors(result.error));
   }
 
   // verify all permissionIds exist
   const permissions = await Permission.findAll({ where: { id: result.data.permissionIds } });
   if (permissions.length !== result.data.permissionIds.length) {
-    return res.status(400).json({ message: "One or more permission IDs are invalid" });
+    return sendError(res, "One or more permission IDs are invalid", 400);
   }
 
   // replace all
@@ -124,7 +125,7 @@ router.put("/:id/permissions", async (req, res) => {
     include: [{ model: Permission, as: "permissions", attributes: ["id", "key", "name", "action"] }],
   });
 
-  res.json(updated);
+  sendSuccess(res, "Permissions updated", updated);
 });
 
 export default router;
