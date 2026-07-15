@@ -7,7 +7,6 @@ import { Button } from '@/components/atoms/Button';
 import { useSignupMutation } from '@/api/queries/auth';
 import { applyFormErrors } from '@/lib/apiError';
 import { paths } from '@/routes/paths';
-import { User, Mail, Lock } from '@/components/atoms/icons';
 
 interface SignupForm {
   name: string;
@@ -55,34 +54,30 @@ export function SignupPage() {
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <TextField
             name="name"
-            label="Full Name"
+            label="Full Name:"
             placeholder="John Doe"
             autoComplete="name"
-            icon={<User className="h-5 w-5" />}
           />
           <TextField
             name="email"
-            label="Email Address"
+            label="Email:"
             type="email"
-            placeholder="name@company.com"
+            placeholder="email@gmail.com"
             autoComplete="email"
-            icon={<Mail className="h-5 w-5" />}
           />
           <TextField
             name="password"
-            label="Password"
+            label="Password:"
             type="password"
-            placeholder="••••••••"
+            placeholder="Enter your Password"
             autoComplete="new-password"
-            icon={<Lock className="h-5 w-5" />}
           />
           <TextField
             name="confirmPassword"
-            label="Confirm Password"
+            label="Confirm Password:"
             type="password"
-            placeholder="••••••••"
+            placeholder="Confirm your Password"
             autoComplete="new-password"
-            icon={<Lock className="h-5 w-5" />}
           />
 
           {methods.formState.errors.root && (
@@ -94,7 +89,7 @@ export function SignupPage() {
           <Button
             type="submit"
             isLoading={signup.isPending}
-            className="w-full rounded-xl bg-gradient-to-r from-brand-orange to-orange-500 py-3.5 font-bold text-white shadow-lg shadow-brand-orange/20 hover:from-brand-orange-hover hover:to-orange-600 hover:shadow-glow-orange"
+            className="w-full rounded-full bg-gradient-to-r from-brand-orange to-amber-500 py-3.5 font-bold text-white shadow-lg shadow-brand-orange/20 hover:from-brand-orange-hover hover:to-amber-600 hover:shadow-[0_0_20px_rgba(249,152,35,0.4)] hover:-translate-y-0.5 transition-all duration-300 active:scale-98"
           >
             Create Account
           </Button>
@@ -102,7 +97,7 @@ export function SignupPage() {
       </FormProvider>
 
       <div className="mt-8 border-t border-border-light pt-6 text-center dark:border-border-dark">
-        <p className="text-sm font-medium text-text-muted-light dark:text-text-muted-dark">
+        <p className="text-sm font-semibold text-text-muted-light dark:text-text-muted-dark">
           Already have an account?{' '}
           <Link
             to={paths.login}
@@ -115,3 +110,4 @@ export function SignupPage() {
     </AuthLayout>
   );
 }
+

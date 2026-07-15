@@ -71,7 +71,7 @@ export function OtpPage() {
         <div className="flex gap-2">
           <Link
             to={paths.forgotPassword}
-            className="flex-1 rounded-xl border border-border-light px-4 py-3.5 text-center text-sm font-semibold text-text-muted-light transition-colors hover:bg-surface-50 dark:border-border-dark dark:text-text-muted-dark dark:hover:bg-surface-800"
+            className="flex-1 rounded-full border border-slate-200 px-4 py-3.5 text-center text-sm font-semibold text-text-muted-light transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-text-muted-dark dark:hover:bg-slate-800"
           >
             Back
           </Link>
@@ -80,7 +80,7 @@ export function OtpPage() {
             onClick={onSubmit}
             isLoading={verify.isPending}
             disabled={!canSubmit}
-            className="flex-1 rounded-xl bg-gradient-to-r from-brand-orange to-orange-500 py-3.5 font-bold text-white shadow-lg shadow-brand-orange/20 hover:from-brand-orange-hover hover:to-orange-600 hover:shadow-glow-orange disabled:opacity-50"
+            className="flex-1 rounded-full bg-brand-orange py-3.5 font-bold text-white shadow-lg shadow-brand-orange/20 hover:bg-brand-orange-hover hover:shadow-glow-orange disabled:opacity-50 transition-all duration-200"
           >
             Verify Code
           </Button>
