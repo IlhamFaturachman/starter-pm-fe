@@ -28,11 +28,7 @@ export function generateTemporaryPassword(): string {
 }
 
 export function generateToken(userId: string): string {
-  return jwt.sign(
-    { id: userId },
-    process.env.JWT_SECRET! || "very_secret_pram_password",
-    { expiresIn: "7d" },
-  );
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET!, { expiresIn: "7d" });
 }
 
 export function formatUserResponse(user: User) {

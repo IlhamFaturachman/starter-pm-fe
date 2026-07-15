@@ -11,6 +11,16 @@ import groupsRouter from "./routes/groups";
 import menusRouter from "./routes/menus";
 import { openApiSpec } from "./openapi";
 
+const requiredVariables = ["JWT_SECRET", "SMTP_PASS", "SMTP_FROM"];
+const missingVariables = requiredVariables.filter(
+  (v) => !process.env[v]?.trim(),
+);
+
+if (missingVariables.length > 0) {
+  console.error("Missing required environment variables:", missingVariables);
+  process.exit(1);
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
