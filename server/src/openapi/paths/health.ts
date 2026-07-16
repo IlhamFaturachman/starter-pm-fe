@@ -1,5 +1,14 @@
 import type { oas31 } from "openapi3-ts";
 
+const healthDataSchema = {
+  type: "object",
+  properties: {
+    status: { type: "string", example: "ok" },
+    timestamp: { type: "string", format: "date-time" },
+    db: { type: "string", example: "connected" },
+  },
+};
+
 export const healthPath: Record<string, oas31.PathItemObject> = {
   "/api/health": {
     get: {
@@ -15,10 +24,11 @@ export const healthPath: Record<string, oas31.PathItemObject> = {
               schema: {
                 type: "object",
                 properties: {
-                  status: { type: "string", example: "ok" },
-                  timestamp: { type: "string", format: "date-time" },
-                  db: { type: "string", example: "connected" },
+                  success: { type: "boolean", example: true },
+                  message: { type: "string", example: "Service healthy" },
+                  data: healthDataSchema,
                 },
+                required: ["success", "message", "data"],
               },
             },
           },
@@ -30,10 +40,18 @@ export const healthPath: Record<string, oas31.PathItemObject> = {
               schema: {
                 type: "object",
                 properties: {
-                  status: { type: "string", example: "degraded" },
-                  timestamp: { type: "string", format: "date-time" },
-                  db: { type: "string", example: "disconnected" },
+                  success: { type: "boolean", example: false },
+                  message: { type: "string", example: "Service degraded" },
+                  data: {
+                    ...healthDataSchema,
+                    properties: {
+                      ...healthDataSchema.properties,
+                      status: { type: "string", example: "degraded" },
+                      db: { type: "string", example: "disconnected" },
+                    },
+                  },
                 },
+                required: ["success", "message", "data"],
               },
             },
           },

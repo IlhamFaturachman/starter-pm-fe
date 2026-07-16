@@ -1,5 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../connection";
+import type Group from "./Group";
+import type Permission from "./Permission";
 
 export interface UserAttributes {
   id: string;
@@ -20,6 +22,22 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
+
+  // populated via eager load: user.groups[].permissions[]
+  declare groups?: (Group & { permissions?: Permission[] })[];
+
+  /**
+   * Check if the user has a specific permission key.
+   * Requires groups to be eagerly loaded with permissions:
+   *   User.findByPk(id, { include: [{ model: Group, as: "groups", include: [{ model: Permission, as: "permissions" }] }] })
+   */
+  hasPermission(key: string): boolean {
+    return (
+      this.groups?.some((group) =>
+        group.permissions?.some((perm) => perm.key === key),
+      ) ?? false
+    );
+  }
 }
 
 User.init(
